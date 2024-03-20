@@ -1,24 +1,21 @@
+import os
+from openai import OpenAI
 import streamlit as st
 
-import os
-# new
-from openai import OpenAI
+# Initialize the OpenAI client
+# Assuming that the API key is set as an environment variable, you can omit the explicit api_key assignment
+client = OpenAI()
 
-# Retrieve the API key from the environment variable
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
-# Initialize the OpenAI client with the API key in the new format
-client = OpenAI(api_key=OPENAI_API_KEY)
-
-# Define the function to generate test cases
+# Define the function to generate test cases using the new client instance
 def generate_test_cases(requirement):
-    response = openai.ChatCompletion.create(
+    response = client.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a helpful assistant capable of generating software test cases."},
             {"role": "user", "content": requirement}
         ]
     )
+    # Access the response using the updated attribute access method
     return response.choices[0].message.content
 
 # Streamlit app layout
@@ -38,6 +35,6 @@ if st.button('Generate Test Cases'):
                 st.write(test_cases)
             except Exception as e:
                 st.error('An error occurred while generating test cases.')
-                st.error(e)
+                st.error(str(e))  # Ensure the exception is converted to string for proper display
     else:
         st.error('Please enter a requirement to generate test cases.')
